@@ -9,15 +9,12 @@ const cors = require('cors');
 
 const { errors } = require('celebrate');
 const cookieParser = require('cookie-parser');
-const { celebrate, Joi } = require('celebrate');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const usersRouter = require('./routes/users');
-const moviesRouter = require('./routes/movies');
 const handleNotFound = require('./routes/errorHandler');
-const authMiddleW = require('./middlewares/authMiddleW');
+
 const errorMiddleW = require('./middlewares/errorMiddleW');
-const { createUser, loginUser } = require('./controllers/users');
+const router = require('./routes');
 
 mongoose.connect('mongodb://127.0.0.1:27017/bddiplomfilm');
 
@@ -26,27 +23,7 @@ app.use(cookieParser());
 app.use(requestLogger);
 app.use(cors());
 
-// Валидация запроса на вход (логин) пользователя
-app.post('/signin', celebrate({
-  body: Joi.object({
-    email: Joi.string().email().required(),
-    password: Joi.string().required(),
-  }),
-}), loginUser);
-
-// Валидация запроса на регистрацию нового пользователя
-app.post('/signup', celebrate({
-  body: Joi.object({
-    name: Joi.string().min(2).max(30),
-    email: Joi.string().email().required(),
-    password: Joi.string().required(),
-  }),
-}), createUser);
-
-app.use(authMiddleW);
-
-app.use('/users', usersRouter);
-app.use('/movies', moviesRouter);
+app.use(router);
 
 app.use(errorLogger);
 app.use(handleNotFound);

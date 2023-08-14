@@ -13,8 +13,6 @@ const Conflict = require('../classErrors/Conflict');
 const createUser = (req, res, next) => {
   const {
     name,
-    about,
-    avatar,
     email,
     password,
   } = req.body;
@@ -23,14 +21,12 @@ const createUser = (req, res, next) => {
     .then((hash) => {
       User.create({
         name,
-        about,
-        avatar,
         email,
         password: hash,
       })
 
         .then(() => res.status(200).send({
-          name, about, avatar, email,
+          name, email,
         }))
         .catch((error) => {
           if (error.code === 11000) {
@@ -65,19 +61,6 @@ const loginUser = (req, res, next) => {
     });
 };
 
-const getUsers = (req, res, next) => {
-  User.find({})
-    .then((users) => {
-      res.status(200).send(users);
-    })
-    .catch((error) => {
-      if (error.name === 'ValidationError') {
-        return next(new BadRequest('Невалидные данные'));
-      }
-      return next(error);
-    });
-};
-
 const getUserInfo = (req, res, next) => {
   const userId = req.user._id;
 
@@ -93,29 +76,13 @@ const getUserInfo = (req, res, next) => {
     });
 };
 
-const getUserById = (req, res, next) => {
-  const { id } = req.params;
-
-  User.findById(id)
-    .then((user) => {
-      if (!user) throw new NotFound('Пользователь с указанным id не найден');
-      res.status(200).send(user);
-    })
-    .catch((error) => {
-      if (error.name === 'CastError') {
-        return next(new BadRequest('Невалидные данные'));
-      }
-      return next(error);
-    });
-};
-
 const updateUser = (req, res, next) => {
-  const { name, about } = req.body;
+  const { name, email } = req.body;
   const userId = req.user._id;
 
   User.findByIdAndUpdate(
     userId,
-    { name, about },
+    { name, email },
     { new: true, runValidators: true },
   )
     .then((updatedUser) => {
@@ -127,33 +94,9 @@ const updateUser = (req, res, next) => {
     });
 };
 
-const updateAvatar = (req, res, next) => {
-  const { avatar } = req.body;
-  const userId = req.user._id;
-
-  User.findByIdAndUpdate(
-    userId,
-    { avatar },
-    { new: true, runValidators: true },
-  )
-    .then((updatedUser) => {
-      if (!updatedUser) throw new NotFound('Пользователь с указанным id не найден');
-      res.status(200).send(updatedUser);
-    })
-    .catch((error) => {
-      if (error.name === 'CastError') {
-        return next(new BadRequest('Невалидные данные'));
-      }
-      return next(error);
-    });
-};
-
 module.exports = {
   createUser,
-  getUsers,
-  getUserById,
   updateUser,
-  updateAvatar,
   loginUser,
   getUserInfo,
 };
