@@ -1,5 +1,4 @@
 const movieRouter = require('express').Router();
-const { celebrate, Joi } = require('celebrate');
 const validCreateMovie = require('../validInput/validCreateMovie');
 const validDelMovie = require('../validInput/validDelMovie');
 const {

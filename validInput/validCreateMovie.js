@@ -1,5 +1,6 @@
 const { celebrate, Joi } = require('celebrate');
 const { CorrectUrl } = require('../constants/correctUrl');
+
 const validCreateMovie = celebrate({
   body: Joi.object({
     country: Joi.string().required(),
@@ -14,6 +15,6 @@ const validCreateMovie = celebrate({
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
   }),
-})
+});
 
 module.exports = validCreateMovie;

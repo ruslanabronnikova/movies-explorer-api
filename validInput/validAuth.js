@@ -6,6 +6,6 @@ const validAuth = celebrate({
     email: Joi.string().email().required(),
     password: Joi.string().required(),
   }),
-})
+});
 
 module.exports = validAuth;
