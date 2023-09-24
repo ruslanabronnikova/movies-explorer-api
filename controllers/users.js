@@ -80,6 +80,8 @@ const updateUser = (req, res, next) => {
   const { name, email } = req.body;
   const userId = req.user._id;
 
+  console.log('lflflfl', name, email)
+
   User.findByIdAndUpdate(
     userId,
     { name, email },

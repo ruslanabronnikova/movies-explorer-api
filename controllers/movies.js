@@ -33,7 +33,6 @@ const createMovie = (req, res, next) => {
     nameEN,
     owner: req.user._id,
   })
-
     .then((movie) => {
       res.status(200).send(movie);
     })
@@ -47,7 +46,9 @@ const createMovie = (req, res, next) => {
 };
 
 const getMovie = (req, res, next) => {
-  Movie.find({})
+  const userId = req.user._id;
+
+  Movie.find({ owner: userId })
     .then((movies) => {
       res.status(200).send(movies);
     })
